@@ -1,16 +1,5 @@
 // C program for the Server Side
-
-// inet_addr
-#include <arpa/inet.h>
-
-// For threading, link with lpthread
-#include <pthread.h>
-#include <semaphore.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <unistd.h>
+#include "Server_Client.h"
 
 // Semaphore variables
 sem_t x, y;
@@ -19,62 +8,38 @@ pthread_t writerthreads[100];
 pthread_t readerthreads[100];
 int readercount = 0;
 
-// Reader Function
-void* reader(void* param)
+void *client_thread(void *arg)
 {
-	// Lock the semaphore
-	sem_wait(&x);
-	readercount++;
+	printf("Client thread created\n");
+    // Get the client socket from the argument
+    int client_sockfd = *((int *) arg);
 
-	if (readercount == 1)
-		sem_wait(&y);
+	int client_request;
+    // Read the random number n sent by the client
+	read(client_sockfd, &client_request, sizeof(client_request));
 
-	// Unlock the semaphore
-	sem_post(&x);
+    // Generate an array of n random numbers
+    int random_numbers[client_request];
+    for (int i = 0; i < client_request; i++)
+    {
+        random_numbers[i] = rand() % NMAX + 1;
+    }
+    // Send the array of random numbers to the client
+	write(client_sockfd, random_numbers, sizeof(random_numbers));
 
-	printf("\n%d reader is inside",
-		readercount);
+    // Close the connection
+    close(client_sockfd);
 
-	sleep(5);
-
-	// Lock the semaphore
-	sem_wait(&x);
-	readercount--;
-
-	if (readercount == 0) {
-		sem_post(&y);
-	}
-
-	// Lock the semaphore
-	sem_post(&x);
-
-	printf("\n%d Reader is leaving",
-		readercount + 1);
-	pthread_exit(NULL);
-}
-
-// Writer Function
-void* writer(void* param)
-{
-	printf("\nWriter is trying to enter");
-
-	// Lock the semaphore
-	sem_wait(&y);
-
-	printf("\nWriter has entered");
-
-	// Unlock the semaphore
-	sem_post(&y);
-
-	printf("\nWriter is leaving");
-	pthread_exit(NULL);
+    return NULL;
 }
 
 // Driver Code
 int main()
 {
+	// Seed the random number generator with the current time
+	srand(time(NULL));
 	// Initialize variables
-	int serverSocket, newSocket;
+	int serverSocket, client_sockfd;
 	struct sockaddr_in serverAddr;
 	struct sockaddr_storage serverStorage;
 
@@ -85,76 +50,33 @@ int main()
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	serverAddr.sin_addr.s_addr = INADDR_ANY;
 	serverAddr.sin_family = AF_INET;
-	serverAddr.sin_port = htons(8989);
+	serverAddr.sin_port = htons(PORT);
 
-	// Bind the socket to the
-	// address and port number.
-	bind(serverSocket,
-		(struct sockaddr*)&serverAddr,
-		sizeof(serverAddr));
+	// Bind the socket to the address and port number.
+	bind(serverSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
 
-	// Listen on the socket,
-	// with 40 max connection
-	// requests queued
-	if (listen(serverSocket, 50) == 0)
-		printf("Listening\n");
+	// Listen on the socket, with 100 max connection requests queued
+	if (listen(serverSocket, 100) == 0)
+		printf("Server listening on port %d...\n", PORT);
 	else
 		printf("Error\n");
 
-	// Array for thread
-	// pthread_t tid[60];
-
-	int i = 0;
 
 	while (1) {
 		addr_size = sizeof(serverStorage);
 
-		// Extract the first
-		// connection in the queue
-		newSocket = accept(serverSocket,
-						(struct sockaddr*)&serverStorage,
-						&addr_size);
-		int choice = 0;
-		recv(newSocket,
-			&choice, sizeof(choice), 0);
+		// Extract the first connection in the queue
+		client_sockfd = accept(serverSocket, 
+								(struct sockaddr*)&serverStorage,
+								&addr_size);
 
-		if (choice == 1) {
-			// Creater readers thread
-			if (pthread_create(&readerthreads[i++], NULL,
-							reader, &newSocket)
-				!= 0)
+		pthread_t thread_id;
+        if (pthread_create(&thread_id, NULL, client_thread, &client_sockfd))
+        {
+            perror("pthread_create");
+            return EXIT_FAILURE;
+        }
 
-				// Error in creating thread
-				printf("Failed to create thread\n");
-		}
-		else if (choice == 2) {
-			// Create writers thread
-			if (pthread_create(&writerthreads[i++], NULL,
-							writer, &newSocket)
-				!= 0)
-
-				// Error in creating thread
-				printf("Failed to create thread\n");
-		}
-
-		if (i >= 50) {
-			// Update i
-			i = 0;
-
-			while (i < 50) {
-				// Suspend execution of
-				// the calling thread
-				// until the target
-				// thread terminates
-				pthread_join(writerthreads[i++],
-							NULL);
-				pthread_join(readerthreads[i++],
-							NULL);
-			}
-
-			// Update i
-			i = 0;
-		}
 	}
 
 	return 0;

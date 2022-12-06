@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "string.h": "c",
+        "stdio.h": "c",
+        "inet.h": "c",
+        "semaphore.h": "c",
+        "pthread.h": "c",
+        "server_client.h": "c"
+    }
+}
