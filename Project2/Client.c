@@ -10,17 +10,17 @@ int main()
 	srand(time(NULL));
 	int client_request;
 	int network_socket;
-	// Create a stream socket
+	// Create a sock_socket
 	network_socket = socket(AF_INET,
 							SOCK_STREAM, 0);
 
-	// Initialise port number and address
+	// port number and address
 	struct sockaddr_in server_address;
 	server_address.sin_family = AF_INET;
 	server_address.sin_addr.s_addr = INADDR_ANY;
 	server_address.sin_port = htons(PORT);
 
-	// Initiate a socket connection
+	// socket connection
 	int connection_status = connect(network_socket,
 									(struct sockaddr*)&server_address,
 									sizeof(server_address));

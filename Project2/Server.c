@@ -1,13 +1,6 @@
 // C program for the Server Side
 #include "Server_Client.h"
 
-// Semaphore variables
-sem_t x, y;
-pthread_t tid;
-pthread_t writerthreads[100];
-pthread_t readerthreads[100];
-int readercount = 0;
-
 void *client_thread(void *arg)
 {
 	printf("Client thread created\n");
@@ -44,8 +37,6 @@ int main()
 	struct sockaddr_storage serverStorage;
 
 	socklen_t addr_size;
-	sem_init(&x, 0, 1);
-	sem_init(&y, 0, 1);
 
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	serverAddr.sin_addr.s_addr = INADDR_ANY;
@@ -81,4 +72,3 @@ int main()
 
 	return 0;
 }
-
