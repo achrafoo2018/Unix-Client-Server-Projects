@@ -104,11 +104,8 @@ class Ui_Dialog(object):
 
         if self.choice == 1: # PIPE (Project 1)
             self.client = subprocess.Popen(['./Client'], cwd='./Project1', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            self.serverPlainText.appendPlainText("Client served...")
         else: # TCP Socket (Project 2)
             self.client = subprocess.Popen(['./Client'], cwd='./Project2', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            # append a message to the Server text box saying that the client thread created
-            self.serverPlainText.appendPlainText("Client thread created...")
 
         # Connect to the client's subprocess' standard output and error pipes
         client_stdout, client_stderr = self.client.communicate(timeout=3)
@@ -126,7 +123,11 @@ class Ui_Dialog(object):
         self.clientPlainText.setPlainText(client_output)
         if client_error:
             self.clientPlainText.setPlainText(client_error)
-
+        else:
+            if self.choice == 1:
+                self.serverPlainText.appendPlainText("Client request received...")
+            else:
+                self.serverPlainText.appendPlainText("Client thread created...")
 
     def tcp_socket(self):
         if self.server is not None:

@@ -8,6 +8,7 @@ void *client_thread(void *arg)
     int client_sockfd = *((int *) arg);
 
 	int client_request;
+
     // Read the random number n sent by the client
 	read(client_sockfd, &client_request, sizeof(client_request));
 
@@ -17,6 +18,7 @@ void *client_thread(void *arg)
     {
         random_numbers[i] = rand() % NMAX + 1;
     }
+
     // Send the array of random numbers to the client
 	write(client_sockfd, random_numbers, sizeof(random_numbers));
 
@@ -26,7 +28,6 @@ void *client_thread(void *arg)
     return NULL;
 }
 
-// Driver Code
 int main()
 {
 	// Seed the random number generator with the current time
@@ -35,14 +36,13 @@ int main()
 	int serverSocket, client_sockfd;
 	struct sockaddr_in serverAddr;
 	struct sockaddr_storage serverStorage;
-
 	socklen_t addr_size;
 
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	serverAddr.sin_addr.s_addr = INADDR_ANY;
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_port = htons(PORT);
-
+			
 	// Bind the socket to the address and port number.
 	bind(serverSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
 
@@ -67,7 +67,6 @@ int main()
             perror("pthread_create");
             return EXIT_FAILURE;
         }
-
 	}
 
 	return 0;
