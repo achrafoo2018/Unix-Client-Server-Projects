@@ -11,4 +11,5 @@ Client: Client.c
 
 clean:
 	rm -f Server Client
+	rm fifo1 fifo2
 

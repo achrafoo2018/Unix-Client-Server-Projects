@@ -76,7 +76,7 @@ class Ui_Dialog(object):
         self.pushButton.setStyleSheet("background-color: green")
         self.pushButton.clicked.connect(self.tcp_socket)
 
-        self.pushButton_2.setText(_translate("Dialog", "PIPE"))
+        self.pushButton_2.setText(_translate("Dialog", "Named Pipe"))
         self.pushButton_2.clicked.connect(self.pipe)
 
         self.pushButton_3.setText(_translate("Dialog", "EXIT"))
@@ -87,10 +87,10 @@ class Ui_Dialog(object):
             self.server.kill()
             self.server = None
         if self.choice == 1: # PIPE (Project 1)
-            self.server = subprocess.Popen(['./Server'], cwd='./Project1', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            self.server = subprocess.Popen(['./Server'], cwd='./Named_PIPE', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             self.serverPlainText.setPlainText("Server is running...")
         else: # TCP Socket (Project 2)
-            self.server = subprocess.Popen(['./Server'], cwd='./Project2', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            self.server = subprocess.Popen(['./Server'], cwd='./TCP_Socket', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             self.serverPlainText.setPlainText("Server listening on port 8989...")
 
 
@@ -103,9 +103,9 @@ class Ui_Dialog(object):
             self.client.kill()
 
         if self.choice == 1: # PIPE (Project 1)
-            self.client = subprocess.Popen(['./Client'], cwd='./Project1', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            self.client = subprocess.Popen(['./Client'], cwd='./Named_PIPE', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         else: # TCP Socket (Project 2)
-            self.client = subprocess.Popen(['./Client'], cwd='./Project2', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            self.client = subprocess.Popen(['./Client'], cwd='./TCP_Socket', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         # Connect to the client's subprocess' standard output and error pipes
         client_stdout, client_stderr = self.client.communicate(timeout=3)
@@ -170,8 +170,8 @@ class Ui_Dialog(object):
 
 
 def run_makefiles():
-    subprocess.call(['make'], cwd='./Project1')
-    subprocess.call(['make'], cwd='./Project2')
+    subprocess.call(['make'], cwd='./Named_PIPE')
+    subprocess.call(['make'], cwd='./TCP_Socket')
 
 
 if __name__ == "__main__":
