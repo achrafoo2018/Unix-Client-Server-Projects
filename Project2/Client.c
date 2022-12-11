@@ -45,11 +45,12 @@ int main()
     int response[NMAX];
     read(network_socket, response, sizeof(response));
 	/* Traitement local de la réponse */    
-    printf("================================================================\n");
+	printf("Server response :\n");
+    printf("=======================================\n");
     for(int i=0; i < client_request; i++){
-        printf("%d ", response[i]);
+        printf("%d  ", response[i]);
     }
-    printf("\n===============================================================\n");
+    printf("\n=======================================\n");
     fflush(stdout);
 
     // Close the connection

@@ -24,11 +24,13 @@ int main(){
     /* Envoi du signal SIGUSR1 au serveur */
     kill(resp.pid, SIGUSR1);
     /* Traitement local de la réponse */    
-    printf("================================================================\n");
+    printf("Number sent: %d\n", quest.n);
+    printf("Server response :\n");
+    printf("=======================================\n");
     for(int i=0; i < quest.n; i++){
-        printf("%d ", resp.resultat[i]);
+        printf("%d  ", resp.resultat[i]);
     }
-    printf("\n===============================================================\n");
+    printf("\n=======================================\n");
     fflush(stdout);
     return 0;    
 }
