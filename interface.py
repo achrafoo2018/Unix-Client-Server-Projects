@@ -127,7 +127,7 @@ class Ui_Dialog(object):
             if self.choice == 1:
                 self.serverPlainText.appendPlainText("Client request received...")
             else:
-                self.serverPlainText.appendPlainText("Client thread created...")
+                self.serverPlainText.appendPlainText("Client child process created...")
 
     def tcp_socket(self):
         if self.server is not None:
