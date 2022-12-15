@@ -1,8 +1,9 @@
+#!/usr/bin/env python3
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
 import os
 import subprocess
-
+from time import sleep
 
 
 class Ui_Dialog(object):
@@ -83,15 +84,19 @@ class Ui_Dialog(object):
         self.pushButton_3.clicked.connect(self.exit)
     
     def run_server(self):
+        serverLog = open("server.log", "w+")
+        # empty the log file
+        serverLog.write("")
         if self.server is not None:
             self.server.kill()
             self.server = None
         if self.choice == 1: # PIPE (Project 1)
             self.server = subprocess.Popen(['./Server'], cwd='./Named_PIPE', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            self.serverPlainText.setPlainText("Server is running...")
         else: # TCP Socket (Project 2)
             self.server = subprocess.Popen(['./Server'], cwd='./TCP_Socket', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            self.serverPlainText.setPlainText("Server listening on port 8989...")
+        sleep(0.5)
+        self.serverPlainText.setPlainText(serverLog.read())
+        serverLog.close()
 
 
     def run_client(self):
@@ -108,8 +113,12 @@ class Ui_Dialog(object):
             self.client = subprocess.Popen(['./Client'], cwd='./TCP_Socket', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         # Connect to the client's subprocess' standard output and error pipes
-        client_stdout, client_stderr = self.client.communicate(timeout=3)
-
+        try:
+            client_stdout, client_stderr = self.client.communicate(timeout=2)
+        except subprocess.TimeoutExpired:
+            self.client.kill()
+            self.clientPlainText.setPlainText("Client timed out...")
+            return
         if self.client.poll() is None:
             self.client.kill()
             self.clientPlainText.setPlainText("Client timed out...")
@@ -123,11 +132,10 @@ class Ui_Dialog(object):
         self.clientPlainText.setPlainText(client_output)
         if client_error:
             self.clientPlainText.setPlainText(client_error)
-        else:
-            if self.choice == 1:
-                self.serverPlainText.appendPlainText("Client request received...")
-            else:
-                self.serverPlainText.appendPlainText("Client child process created...")
+
+        serverLog = open("server.log", "r")
+        self.serverPlainText.setPlainText(serverLog.read())
+        serverLog.close()
 
     def tcp_socket(self):
         if self.server is not None:
@@ -143,6 +151,10 @@ class Ui_Dialog(object):
         # clear the Server and Client text boxes
         self.serverPlainText.setPlainText("")
         self.clientPlainText.setPlainText("")
+        serverLog = open("server.log", "w")
+        # empty the server log file
+        serverLog.write("")
+        serverLog.close()
 
 
     def pipe(self):
@@ -159,6 +171,11 @@ class Ui_Dialog(object):
         # clear the Server and Client text boxes
         self.serverPlainText.setPlainText("")
         self.clientPlainText.setPlainText("")
+        serverLog = open("server.log", "w")
+        # empty the server log file
+        serverLog.write("")
+        serverLog.close()
+
 
     def exit(self):
         if self.server is not None:

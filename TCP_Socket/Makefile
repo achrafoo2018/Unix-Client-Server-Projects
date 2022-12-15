@@ -1,14 +1,13 @@
 CC = gcc
 CFLAGS = -Wall -g
-LDFLAGS = -lpthread
 
 all: Server Client
 
 Server: Server.c
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $@ $^
 
 Client: Client.c
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $@ $^
 
 clean:
 	rm -f Server Client

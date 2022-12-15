@@ -3,6 +3,11 @@
 
 
 int main(){
+        FILE *fp = fopen("../server.log", "w");
+        printf("Server waiting for client...\n");
+        fprintf(fp, "Server waiting for client...\n");
+        fflush(stdout);
+        fflush(fp);
         /*Déclarations */
         char *pipe_fifo1 = FIFO1;
         char *pipe_fifo2 = FIFO2;
@@ -26,8 +31,10 @@ int main(){
         while(1){
                 /* lecture d’une question */
                 read(fd1, &quest, sizeof(quest));
-                printf("Question recue du processus: %d\n", quest.pid);
+                printf("Question received from process: %d\n", quest.pid);
+                fprintf(fp, "Question received from process: %d\n", quest.pid);
                 fflush(stdout);
+                fflush(fp);
                 /* construction de la réponse */
                 resp.pid = getpid();
                 for(int i=0; i < quest.n; i++){

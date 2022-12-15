@@ -39,11 +39,11 @@ int main()
 
 
     // Send the random number client_request to the server
-	write(network_socket, &client_request, sizeof(client_request));
+	send(network_socket, &client_request, sizeof(client_request), 0);
 	printf("Sent %ld bytes: %d\n", sizeof(client_request), client_request);
     // Read the array of random numbers sent by the server
     int response[NMAX];
-    read(network_socket, response, sizeof(response));
+    recv(network_socket, response, sizeof(response), 0);
 	/* Traitement local de la réponse */    
 	printf("Server response :\n");
     printf("=======================================\n");
