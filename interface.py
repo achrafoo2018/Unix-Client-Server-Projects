@@ -74,13 +74,14 @@ class Ui_Dialog(object):
         self.pushButton_4.clicked.connect(self.run_client)
 
         self.pushButton.setText(_translate("Dialog", "TCP Socket"))
-        self.pushButton.setStyleSheet("background-color: green")
+        self.pushButton.setStyleSheet("background-color: #0078d7")
         self.pushButton.clicked.connect(self.tcp_socket)
 
         self.pushButton_2.setText(_translate("Dialog", "Named Pipe"))
         self.pushButton_2.clicked.connect(self.pipe)
 
         self.pushButton_3.setText(_translate("Dialog", "EXIT"))
+        self.pushButton_3.setStyleSheet("background-color: red")
         self.pushButton_3.clicked.connect(self.exit)
     
     def run_server(self):
@@ -142,8 +143,8 @@ class Ui_Dialog(object):
             self.server.kill()
             self.server = None
         self.choice = 2
-        # make the TCP Socket button green
-        self.pushButton.setStyleSheet("background-color: green")
+        # make the TCP Socket button #0078d7
+        self.pushButton.setStyleSheet("background-color: #0078d7")
 
         # make the PIPE button white
         self.pushButton_2.setStyleSheet("background-color: white")
@@ -162,8 +163,8 @@ class Ui_Dialog(object):
             self.server.kill()
             self.server = None
         self.choice = 1
-        # make the PIPE button green
-        self.pushButton_2.setStyleSheet("background-color: green")
+        # make the PIPE button #0078d7
+        self.pushButton_2.setStyleSheet("background-color: #0078d7")
 
         # make the TCP Socket button white
         self.pushButton.setStyleSheet("background-color: white")
@@ -195,6 +196,7 @@ if __name__ == "__main__":
     run_makefiles() # Run the makefiles for both projects
 
     app = QtWidgets.QApplication(sys.argv)
+    app.setStyle('Fusion')
     Dialog = QtWidgets.QDialog()
     ui = Ui_Dialog()
     ui.setupUi(Dialog)
